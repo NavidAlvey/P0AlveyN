@@ -45,16 +45,23 @@ public class User {
     }
 
     public void setName(String name) {
-        
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
         this.name = name.trim();
     }
 
     public void setLastFourDigits(String lastFourDigits) {
-        
+        if (lastFourDigits == null || lastFourDigits.length() != 4) {
+            throw new IllegalArgumentException("Invalid last four digits of card number");
+        }
         this.lastFourDigits = lastFourDigits;
     }
 
     public void setPrimaryCardholder(boolean primaryCardholder) {
+        if (primaryCardholder == true && !name.equalsIgnoreCase("Alvey")) {
+            throw new IllegalArgumentException("Only Alvey can be the primary cardholder");
+        }
         this.primaryCardholder = primaryCardholder;
     }
 
