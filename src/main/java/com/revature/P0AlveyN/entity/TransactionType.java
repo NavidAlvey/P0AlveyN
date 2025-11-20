@@ -55,5 +55,17 @@ public class TransactionType {
         }
     }
 
-    
+    // Converts a transaction type constant (1-3) to its string name
+    public static String name(int type) {
+        switch(type) {
+            case PURCHASE:
+                return "PURCHASE";
+            case REFUND:
+                return "REFUND";
+            case PAYMENT:
+                return "PAYMENT";
+            default:
+                throw new IllegalArgumentException("Invalid transaction type: " + type);
+        }
+    }
 }
