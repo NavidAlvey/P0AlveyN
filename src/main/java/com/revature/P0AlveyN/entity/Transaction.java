@@ -29,5 +29,34 @@ public class Transaction {
 
     // Methods
 
+    // GETTERS
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDate getTransactionDate() {
+        return transactionDate;
+    }
+
+    public String getVendor() {
+        return vendor;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public String getCardLastFour() {
+        return cardLastFour;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
 
 }
