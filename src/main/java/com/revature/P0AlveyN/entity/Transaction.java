@@ -2,7 +2,7 @@ package com.revature.P0AlveyN.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+import java.util.Objects;
 
 public class Transaction {
 
@@ -85,5 +85,20 @@ public class Transaction {
     
     public void setId(Long id) {
         this.id = id;
+    }
+
+    // Same checks as from the user class
+    // if there is a duplicate return the unique identifier
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Transaction)) return false;
+        Transaction that = (Transaction) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
