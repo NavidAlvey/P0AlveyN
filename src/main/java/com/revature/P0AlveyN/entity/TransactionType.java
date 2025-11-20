@@ -21,8 +21,11 @@ public class TransactionType {
 
     // Method
 
-    // Getter
-    public static int getBalanceUpdate(int type) {
+    // Getters
+
+    // Multiplies the transaction by either +1 or -1 to identify whether the
+    // transaction increases or decreases the balance
+    public static int getMultiplier(int type) {
         switch(type) {
             case PURCHASE:
                 return 1; // Increase balance
@@ -33,6 +36,24 @@ public class TransactionType {
             default:
                 throw new IllegalArgumentException("Invalid transaction type:" + type);
         }
+    }
 
-}
+    //Converts a string to a transaction type constant
+    public static int valueOf(String typeName) {
+        if (typeName == null) {
+            throw new IllegalArgumentException("Transaction type cannot be null");
+        }
+        String normalized = typeName.trim().toUpperCase();
+        if ("PURCHASE".equals(normalized)) {
+            return PURCHASE;
+        } else if ("REFUND".equals(normalized)) {
+            return REFUND;
+        } else if ("PAYMENT".equals(normalized)) {
+            return PAYMENT;
+        } else {
+            throw new IllegalArgumentException("Invalid transaction type: " + typeName);
+        }
+    }
+
+    
 }
