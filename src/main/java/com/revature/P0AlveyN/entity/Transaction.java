@@ -58,5 +58,32 @@ public class Transaction {
         return description;
     }
 
+    // SETTERS
+    public void setTransactionDate(LocalDate transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setCardLastFour(String cardLastFour) {
+        this.cardLastFour = cardLastFour;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
