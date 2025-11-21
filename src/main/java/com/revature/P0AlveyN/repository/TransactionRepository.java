@@ -48,109 +48,16 @@ public class TransactionRepository {
         
         return transaction;
     }
-    
-    // Finds a transaction by ID
-    public Optional<Transaction> findById(Long id) throws SQLException {
-        String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
-                     "FROM transactions WHERE id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setLong(1, id);
-            
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapResultSetToTransaction(rs));
-                }
-            }
+        // Map a result set row to a transaction object, similar to mapping to a user object from the user entity
+        private Transaction mapResultSetToTransaction(ResultSet rs) throws SQLException {
+            Transaction transaction = new Transaction();
+            transaction.setId(rs.getLong("id"));
+            transaction.setTransactionDate(rs.getDate("transaction_date").toLocalDate());
+            transaction.setVendor(rs.getString("vendor"));
+            transaction.setAmount(rs.getBigDecimal("amount"));
+            transaction.setCardLastFour(rs.getString("card_last_four"));
+            transaction.setType(rs.getInt("type"));
+            transaction.setDescription(rs.getString("description"));
+            return transaction;
         }
-        
-        return Optional.empty();
-    }
-    
-    // Finds transactions between two dates
-    public List<Transaction> findByTransactionDateBetween(LocalDate start, LocalDate end) throws SQLException {
-        String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
-                     "FROM transactions WHERE transaction_date BETWEEN ? AND ? ORDER BY transaction_date DESC";
-        List<Transaction> transactions = new ArrayList<>();
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setDate(1, java.sql.Date.valueOf(start));
-            pstmt.setDate(2, java.sql.Date.valueOf(end));
-            
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    transactions.add(mapResultSetToTransaction(rs));
-                }
-            }
-        }
-        
-        return transactions;
-    }
-    
-    // Finds all transactions
-    public List<Transaction> findAll() throws SQLException {
-        String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
-                     "FROM transactions ORDER BY transaction_date DESC";
-        List<Transaction> transactions = new ArrayList<>();
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            
-            while (rs.next()) {
-                transactions.add(mapResultSetToTransaction(rs));
-            }
-        }
-        
-        return transactions;
-    }
-    
-    // Update an exisiting transaction
-    public void update(Transaction transaction) throws SQLException {
-        String sql = "UPDATE transactions SET transaction_date = ?, vendor = ?, amount = ?, " +
-                     "card_last_four = ?, type = ?, description = ? WHERE id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setDate(1, java.sql.Date.valueOf(transaction.getTransactionDate()));
-            pstmt.setString(2, transaction.getVendor());
-            pstmt.setBigDecimal(3, transaction.getAmount());
-            pstmt.setString(4, transaction.getCardLastFour());
-            pstmt.setString(5, TransactionType.name(transaction.getType()));
-            pstmt.setString(6, transaction.getDescription());
-            pstmt.setLong(7, transaction.getId());
-            
-            pstmt.executeUpdate();
-        }
-    }
-    
-    // Delete a transaction by ID
-    public void deleteById(Long id) throws SQLException {
-        String sql = "DELETE FROM transactions WHERE id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setLong(1, id);
-            pstmt.executeUpdate();
-        }
-    }
-    
-    // Map a result set row to a transaction object, similar to mapping to a user object from the user entity
-    private Transaction mapResultSetToTransaction(ResultSet rs) throws SQLException {
-        Transaction transaction = new Transaction();
-        transaction.setId(rs.getLong("id"));
-        transaction.setTransactionDate(rs.getDate("transaction_date").toLocalDate());
-        transaction.setVendor(rs.getString("vendor"));
-        transaction.setAmount(rs.getBigDecimal("amount"));
-        transaction.setCardLastFour(rs.getString("card_last_four"));
-        transaction.setType(rs.getInt("type"));
-        transaction.setDescription(rs.getString("description"));
-        return transaction;
-    }
 }
