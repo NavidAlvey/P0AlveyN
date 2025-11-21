@@ -52,6 +52,12 @@ public class TransactionService {
                 request.type(),
                 request.description());
 
+        Optional<Transaction> existing = transactionRepository.findDuplicate(transaction);
+        if (existing.isPresent()) {
+            // Return existing transaction instead of inserting new one
+            return existing.get();
+        }
+                
         // Save transaction first to get ID
         transaction = transactionRepository.save(transaction);
 
