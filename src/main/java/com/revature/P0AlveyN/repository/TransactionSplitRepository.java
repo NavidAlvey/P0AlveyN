@@ -43,6 +43,7 @@ public class TransactionSplitRepository {
         
         return split;
     }
+
     // Map result set row to a transactionSplit object
     private TransactionSplit mapResultSetToSplit(ResultSet rs) throws SQLException {
         TransactionSplit split = new TransactionSplit();
@@ -52,6 +53,7 @@ public class TransactionSplitRepository {
         split.setShareAmount(rs.getBigDecimal("share_amount"));
         return split;
     }
+
     // Find a split by ID
     public Optional<TransactionSplit> findById(Long id) throws SQLException {
         String sql = "SELECT id, transaction_id, user_id, share_amount FROM transaction_splits WHERE id = ?";
@@ -69,5 +71,25 @@ public class TransactionSplitRepository {
         }
         
         return Optional.empty();
+    }
+    
+    // Find all splits for a transaction
+    public List<TransactionSplit> findByTransactionId(Long transactionId) throws SQLException {
+        String sql = "SELECT id, transaction_id, user_id, share_amount FROM transaction_splits WHERE transaction_id = ?";
+        List<TransactionSplit> splits = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, transactionId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    splits.add(mapResultSetToSplit(rs));
+                }
+            }
+        }
+        
+        return splits;
     }
 }
