@@ -43,4 +43,13 @@ public class TransactionSplitRepository {
         
         return split;
     }
+    // Map result set row to a transactionSplit object
+    private TransactionSplit mapResultSetToSplit(ResultSet rs) throws SQLException {
+        TransactionSplit split = new TransactionSplit();
+        split.setId(rs.getLong("id"));
+        split.setTransactionId(rs.getLong("transaction_id"));
+        split.setUserId(rs.getLong("user_id"));
+        split.setShareAmount(rs.getBigDecimal("share_amount"));
+        return split;
+    }
 }
