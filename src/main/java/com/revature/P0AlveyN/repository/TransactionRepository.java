@@ -81,7 +81,7 @@ public class TransactionRepository {
         
         return Optional.empty();
     }
-    // Finds transactions between two dates
+    // Find transactions between two dates
     public List<Transaction> findByTransactionDateBetween(LocalDate start, LocalDate end) throws SQLException {
         String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
                      "FROM transactions WHERE transaction_date BETWEEN ? AND ? ORDER BY transaction_date DESC";
@@ -97,6 +97,23 @@ public class TransactionRepository {
                 while (rs.next()) {
                     transactions.add(mapResultSetToTransaction(rs));
                 }
+            }
+        }
+        
+        return transactions;
+    }
+    // Find all transactions
+    public List<Transaction> findAll() throws SQLException {
+        String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
+                        "FROM transactions ORDER BY transaction_date DESC";
+        List<Transaction> transactions = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                transactions.add(mapResultSetToTransaction(rs));
             }
         }
         
