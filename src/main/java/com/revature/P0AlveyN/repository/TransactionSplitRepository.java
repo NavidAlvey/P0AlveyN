@@ -137,4 +137,28 @@ public class TransactionSplitRepository {
         
         return splits;
     }
+
+    // Find splits for a user by last four digits
+    public List<TransactionSplit> findByUserLastFourDigits(String lastFourDigits) throws SQLException {
+        String sql = "SELECT ts.id, ts.transaction_id, ts.user_id, ts.share_amount " +
+                        "FROM transaction_splits ts " +
+                        "JOIN users u ON ts.user_id = u.id " +
+                        "WHERE u.last_four = ? " +
+                        "ORDER BY ts.id DESC";
+        List<TransactionSplit> splits = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, lastFourDigits);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    splits.add(mapResultSetToSplit(rs));
+                }
+            }
+        }
+        
+        return splits;
+    }
 }
