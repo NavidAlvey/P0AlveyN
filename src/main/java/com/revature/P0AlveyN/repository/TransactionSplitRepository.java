@@ -112,4 +112,29 @@ public class TransactionSplitRepository {
         
         return splits;
     }
+
+    // Find splits for transactions within a date range
+    public List<TransactionSplit> findByTransactionDateBetween(LocalDate start, LocalDate end) throws SQLException {
+        String sql = "SELECT ts.id, ts.transaction_id, ts.user_id, ts.share_amount " +
+                     "FROM transaction_splits ts " +
+                     "JOIN transactions t ON ts.transaction_id = t.id " +
+                     "WHERE t.transaction_date BETWEEN ? AND ? " +
+                     "ORDER BY t.transaction_date DESC";
+        List<TransactionSplit> splits = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setDate(1, java.sql.Date.valueOf(start));
+            pstmt.setDate(2, java.sql.Date.valueOf(end));
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    splits.add(mapResultSetToSplit(rs));
+                }
+            }
+        }
+        
+        return splits;
+    }
 }
