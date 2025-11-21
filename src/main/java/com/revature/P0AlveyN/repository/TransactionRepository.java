@@ -48,7 +48,7 @@ public class TransactionRepository {
         
         return transaction;
     }
-    
+
     // Map a result set row to a transaction object, similar to mapping to a user object from the user entity
     private Transaction mapResultSetToTransaction(ResultSet rs) throws SQLException {
         Transaction transaction = new Transaction();
@@ -80,5 +80,26 @@ public class TransactionRepository {
         }
         
         return Optional.empty();
+    }
+    // Finds transactions between two dates
+    public List<Transaction> findByTransactionDateBetween(LocalDate start, LocalDate end) throws SQLException {
+        String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
+                     "FROM transactions WHERE transaction_date BETWEEN ? AND ? ORDER BY transaction_date DESC";
+        List<Transaction> transactions = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setDate(1, java.sql.Date.valueOf(start));
+            pstmt.setDate(2, java.sql.Date.valueOf(end));
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    transactions.add(mapResultSetToTransaction(rs));
+                }
+            }
+        }
+        
+        return transactions;
     }
 }
