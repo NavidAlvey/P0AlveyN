@@ -71,7 +71,7 @@ public class UserRepository {
             
             return Optional.empty();
         }
-        
+
      //Finds a user by last four digits of card
     public Optional<User> findByLastFourDigits(String lastFourDigits) throws SQLException {
         String sql = "SELECT id, name, last_four, primary_cardholder FROM users WHERE last_four = ?";
@@ -89,6 +89,23 @@ public class UserRepository {
         }
         
         return Optional.empty();
+    }
+
+    // Find all users
+    public List<User> findAll() throws SQLException {
+        String sql = "SELECT id, name, last_four, primary_cardholder FROM users ORDER BY name";
+        List<User> users = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+        }
+        
+        return users;
     }
     
 }
