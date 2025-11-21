@@ -161,7 +161,7 @@ public class TransactionSplitRepository {
         
         return splits;
     }
-    
+
     // Delete a split by ID
     public void deleteById(Long id) throws SQLException {
         String sql = "DELETE FROM transaction_splits WHERE id = ?";
@@ -170,6 +170,18 @@ public class TransactionSplitRepository {
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setLong(1, id);
+            pstmt.executeUpdate();
+        }
+    }
+
+    // Delete all splits for a transaction
+    public void deleteByTransactionId(Long transactionId) throws SQLException {
+        String sql = "DELETE FROM transaction_splits WHERE transaction_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, transactionId);
             pstmt.executeUpdate();
         }
     }
