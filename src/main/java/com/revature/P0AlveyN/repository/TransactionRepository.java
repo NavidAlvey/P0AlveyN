@@ -48,16 +48,37 @@ public class TransactionRepository {
         
         return transaction;
     }
-        // Map a result set row to a transaction object, similar to mapping to a user object from the user entity
-        private Transaction mapResultSetToTransaction(ResultSet rs) throws SQLException {
-            Transaction transaction = new Transaction();
-            transaction.setId(rs.getLong("id"));
-            transaction.setTransactionDate(rs.getDate("transaction_date").toLocalDate());
-            transaction.setVendor(rs.getString("vendor"));
-            transaction.setAmount(rs.getBigDecimal("amount"));
-            transaction.setCardLastFour(rs.getString("card_last_four"));
-            transaction.setType(rs.getInt("type"));
-            transaction.setDescription(rs.getString("description"));
-            return transaction;
+    
+    // Map a result set row to a transaction object, similar to mapping to a user object from the user entity
+    private Transaction mapResultSetToTransaction(ResultSet rs) throws SQLException {
+        Transaction transaction = new Transaction();
+        transaction.setId(rs.getLong("id"));
+        transaction.setTransactionDate(rs.getDate("transaction_date").toLocalDate());
+        transaction.setVendor(rs.getString("vendor"));
+        transaction.setAmount(rs.getBigDecimal("amount"));
+        transaction.setCardLastFour(rs.getString("card_last_four"));
+        transaction.setType(rs.getInt("type"));
+        transaction.setDescription(rs.getString("description"));
+        return transaction;
+    }
+
+    // Finds a transaction by ID
+    public Optional<Transaction> findById(Long id) throws SQLException {
+        String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
+                    "FROM transactions WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, id);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToTransaction(rs));
+                }
+            }
         }
+        
+        return Optional.empty();
+    }
 }
