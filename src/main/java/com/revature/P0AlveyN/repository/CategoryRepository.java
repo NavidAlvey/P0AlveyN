@@ -40,5 +40,12 @@ public class CategoryRepository {
         
         return category;
     }
+    // Map result set row to a category object
+    private Category mapResultSetToCategory(ResultSet rs) throws SQLException {
+        Category category = new Category();
+        category.setId(rs.getLong("id"));
+        category.setName(rs.getString("name"));
+        return category;
+    }
 
 }
