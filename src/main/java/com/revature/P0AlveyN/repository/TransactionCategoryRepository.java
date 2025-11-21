@@ -25,7 +25,7 @@ public class TransactionCategoryRepository {
             pstmt.executeUpdate();
         }
     }
-    
+
     // Get all categories for a transaction
     public List<Category> findCategoriesByTransactionId(Long transactionId) throws SQLException {
         String sql = "SELECT c.id, c.name " +
@@ -51,6 +51,19 @@ public class TransactionCategoryRepository {
         }
         
         return categories;
+    }
+
+    // Remove a category from a transaction
+    public void removeCategoryFromTransaction(Long transactionId, Long categoryId) throws SQLException {
+        String sql = "DELETE FROM transaction_categories WHERE transaction_id = ? AND category_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, transactionId);
+            pstmt.setLong(2, categoryId);
+            pstmt.executeUpdate();
+        }
     }
 }
 
