@@ -119,4 +119,23 @@ public class TransactionRepository {
         
         return transactions;
     }
+    // Update an exisiting transaction
+    public void update(Transaction transaction) throws SQLException {
+        String sql = "UPDATE transactions SET transaction_date = ?, vendor = ?, amount = ?, " +
+                        "card_last_four = ?, type = ?, description = ? WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setDate(1, java.sql.Date.valueOf(transaction.getTransactionDate()));
+            pstmt.setString(2, transaction.getVendor());
+            pstmt.setBigDecimal(3, transaction.getAmount());
+            pstmt.setString(4, transaction.getCardLastFour());
+            pstmt.setString(5, TransactionType.name(transaction.getType()));
+            pstmt.setString(6, transaction.getDescription());
+            pstmt.setLong(7, transaction.getId());
+            
+            pstmt.executeUpdate();
+        }
+    }
 }
