@@ -25,6 +25,32 @@ public class TransactionCategoryRepository {
             pstmt.executeUpdate();
         }
     }
-
+    
+    // Get all categories for a transaction
+    public List<Category> findCategoriesByTransactionId(Long transactionId) throws SQLException {
+        String sql = "SELECT c.id, c.name " +
+                     "FROM categories c " +
+                     "JOIN transaction_categories tc ON c.id = tc.category_id " +
+                     "WHERE tc.transaction_id = ? " +
+                     "ORDER BY c.name";
+        List<Category> categories = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, transactionId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Category category = new Category();
+                    category.setId(rs.getLong("id"));
+                    category.setName(rs.getString("name"));
+                    categories.add(category);
+                }
+            }
+        }
+        
+        return categories;
+    }
 }
 
