@@ -81,7 +81,7 @@ public class TransactionRepository {
         
         return Optional.empty();
     }
-    
+
     // Find transactions between two dates
     public List<Transaction> findByTransactionDateBetween(LocalDate start, LocalDate end) throws SQLException {
         String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
@@ -153,4 +153,36 @@ public class TransactionRepository {
             pstmt.executeUpdate();
         }
     }
+
+    public Optional<Transaction> findDuplicate(Transaction tx) throws SQLException {
+        String sql = """
+            SELECT id, transaction_date, vendor, amount, card_last_four, type, description
+            FROM transactions
+            WHERE transaction_date = ?
+              AND vendor = ?
+              AND amount = ?
+              AND card_last_four = ?
+              AND description = ?
+            LIMIT 1
+        """;
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    
+            pstmt.setDate(1, java.sql.Date.valueOf(tx.getTransactionDate()));
+            pstmt.setString(2, tx.getVendor());
+            pstmt.setBigDecimal(3, tx.getAmount());
+            pstmt.setString(4, tx.getCardLastFour());
+            pstmt.setString(5, tx.getDescription());
+    
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToTransaction(rs));
+                }
+            }
+        }
+    
+        return Optional.empty();
+    }
+    
 }
