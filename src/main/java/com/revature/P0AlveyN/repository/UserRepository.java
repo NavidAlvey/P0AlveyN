@@ -52,7 +52,7 @@ public class UserRepository {
         user.setPrimaryCardholder(rs.getBoolean("primary_cardholder"));
         return user;
     }
-    
+
     // Finds a user by ID
     public Optional<User> findById(Long id) throws SQLException {
             String sql = "SELECT id, name, last_four, primary_cardholder FROM users WHERE id = ?";
@@ -71,6 +71,24 @@ public class UserRepository {
             
             return Optional.empty();
         }
-
+        
+     //Finds a user by last four digits of card
+    public Optional<User> findByLastFourDigits(String lastFourDigits) throws SQLException {
+        String sql = "SELECT id, name, last_four, primary_cardholder FROM users WHERE last_four = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, lastFourDigits);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToUser(rs));
+                }
+            }
+        }
+        
+        return Optional.empty();
+    }
     
 }
