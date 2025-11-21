@@ -40,7 +40,7 @@ public class CategoryRepository {
         
         return category;
     }
-    
+
     // Map result set row to a category object
     private Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category category = new Category();
@@ -102,5 +102,19 @@ public class CategoryRepository {
         }
         
         return categories;
+    }
+
+    // Update an exisiting category
+    public void update(Category category) throws SQLException {
+        String sql = "UPDATE categories SET name = ? WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, category.getName());
+            pstmt.setLong(2, category.getId());
+            
+            pstmt.executeUpdate();
+        }
     }
 }
