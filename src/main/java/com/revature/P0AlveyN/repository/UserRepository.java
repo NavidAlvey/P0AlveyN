@@ -107,5 +107,20 @@ public class UserRepository {
         
         return users;
     }
+        // Update an existing user
+        public void update(User user) throws SQLException {
+            String sql = "UPDATE users SET name = ?, last_four = ?, primary_cardholder = ? WHERE id = ?";
+            
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+                pstmt.setString(1, user.getName());
+                pstmt.setString(2, user.getLastFourDigits());
+                pstmt.setBoolean(3, user.isPrimaryCardholder());
+                pstmt.setLong(4, user.getId());
+                
+                pstmt.executeUpdate();
+            }
+        }
     
 }
