@@ -52,4 +52,22 @@ public class TransactionSplitRepository {
         split.setShareAmount(rs.getBigDecimal("share_amount"));
         return split;
     }
+    // Find a split by ID
+    public Optional<TransactionSplit> findById(Long id) throws SQLException {
+        String sql = "SELECT id, transaction_id, user_id, share_amount FROM transaction_splits WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, id);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToSplit(rs));
+                }
+            }
+        }
+        
+        return Optional.empty();
+    }
 }
