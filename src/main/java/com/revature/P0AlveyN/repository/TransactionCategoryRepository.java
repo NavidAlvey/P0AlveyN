@@ -65,5 +65,17 @@ public class TransactionCategoryRepository {
             pstmt.executeUpdate();
         }
     }
+
+    // Remove all categories from a transaction
+    public void removeAllCategoriesFromTransaction(Long transactionId) throws SQLException {
+        String sql = "DELETE FROM transaction_categories WHERE transaction_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, transactionId);
+            pstmt.executeUpdate();
+        }
+    }
 }
 
