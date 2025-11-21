@@ -52,7 +52,25 @@ public class UserRepository {
         user.setPrimaryCardholder(rs.getBoolean("primary_cardholder"));
         return user;
     }
-
+    
+    // Finds a user by ID
+    public Optional<User> findById(Long id) throws SQLException {
+            String sql = "SELECT id, name, last_four, primary_cardholder FROM users WHERE id = ?";
+            
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+                pstmt.setLong(1, id);
+                
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        return Optional.of(mapResultSetToUser(rs));
+                    }
+                }
+            }
+            
+            return Optional.empty();
+        }
 
     
 }
