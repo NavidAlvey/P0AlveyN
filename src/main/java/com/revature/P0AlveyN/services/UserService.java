@@ -31,4 +31,8 @@ public class UserService {
         }
     }
 
+    // Find a user by last four digits
+    public Optional<User> findByLastFour(String lastFourDigits) throws SQLException {
+        return userRepository.findByLastFourDigits(lastFourDigits);
+    }
 }
