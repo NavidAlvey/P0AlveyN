@@ -81,6 +81,7 @@ public class TransactionRepository {
         
         return Optional.empty();
     }
+    
     // Find transactions between two dates
     public List<Transaction> findByTransactionDateBetween(LocalDate start, LocalDate end) throws SQLException {
         String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
@@ -102,6 +103,7 @@ public class TransactionRepository {
         
         return transactions;
     }
+
     // Find all transactions
     public List<Transaction> findAll() throws SQLException {
         String sql = "SELECT id, transaction_date, vendor, amount, card_last_four, type, description " +
@@ -119,6 +121,7 @@ public class TransactionRepository {
         
         return transactions;
     }
+
     // Update an exisiting transaction
     public void update(Transaction transaction) throws SQLException {
         String sql = "UPDATE transactions SET transaction_date = ?, vendor = ?, amount = ?, " +
@@ -135,6 +138,18 @@ public class TransactionRepository {
             pstmt.setString(6, transaction.getDescription());
             pstmt.setLong(7, transaction.getId());
             
+            pstmt.executeUpdate();
+        }
+    }
+
+    // Delete a transaction by ID
+    public void deleteById(Long id) throws SQLException {
+        String sql = "DELETE FROM transactions WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, id);
             pstmt.executeUpdate();
         }
     }
