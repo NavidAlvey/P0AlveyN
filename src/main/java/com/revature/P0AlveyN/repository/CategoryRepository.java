@@ -47,5 +47,24 @@ public class CategoryRepository {
         category.setName(rs.getString("name"));
         return category;
     }
+    
+    // Find a category by ID
+    public Optional<Category> findById(Long id) throws SQLException {
+        String sql = "SELECT id, name FROM categories WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setLong(1, id);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToCategory(rs));
+                }
+            }
+        }
+        
+        return Optional.empty();
+    }
 
 }
