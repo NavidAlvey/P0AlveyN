@@ -42,5 +42,17 @@ public class UserRepository {
         
         return user;
     }
+
+    //Maps a ResultSet row to a User object
+    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setName(rs.getString("name"));
+        user.setLastFourDigits(rs.getString("last_four"));
+        user.setPrimaryCardholder(rs.getBoolean("primary_cardholder"));
+        return user;
+    }
+
+
     
 }
