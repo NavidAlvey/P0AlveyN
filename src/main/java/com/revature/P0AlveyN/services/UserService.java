@@ -40,4 +40,9 @@ public class UserService {
     public List<User> getAllUsers() throws SQLException {
         return userRepository.findAll();
     }
+
+    // Find a user by ID
+    public Optional<User> findById(Long id) throws SQLException {
+        return userRepository.findById(id);
+    }
 }
