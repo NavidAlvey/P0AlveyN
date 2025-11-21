@@ -35,4 +35,9 @@ public class UserService {
     public Optional<User> findByLastFour(String lastFourDigits) throws SQLException {
         return userRepository.findByLastFourDigits(lastFourDigits);
     }
+
+    // Get all users
+    public List<User> getAllUsers() throws SQLException {
+        return userRepository.findAll();
+    }
 }
