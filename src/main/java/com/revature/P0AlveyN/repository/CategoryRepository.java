@@ -40,6 +40,7 @@ public class CategoryRepository {
         
         return category;
     }
+    
     // Map result set row to a category object
     private Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category category = new Category();
@@ -67,23 +68,39 @@ public class CategoryRepository {
         return Optional.empty();
     }
 
-        // Find a category by name
-        public Optional<Category> findByNameIgnoreCase(String name) throws SQLException {
-            String sql = "SELECT id, name FROM categories WHERE LOWER(name) = LOWER(?)";
+    // Find a category by name
+    public Optional<Category> findByNameIgnoreCase(String name) throws SQLException {
+        String sql = "SELECT id, name FROM categories WHERE LOWER(name) = LOWER(?)";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
-                pstmt.setString(1, name);
-                
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        return Optional.of(mapResultSetToCategory(rs));
-                    }
+            pstmt.setString(1, name);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToCategory(rs));
                 }
             }
-            
-            return Optional.empty();
         }
+        
+        return Optional.empty();
+    }
 
+    // Find all categories
+    public List<Category> findAll() throws SQLException {
+        String sql = "SELECT id, name FROM categories ORDER BY name";
+        List<Category> categories = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                categories.add(mapResultSetToCategory(rs));
+            }
+        }
+        
+        return categories;
+    }
 }
